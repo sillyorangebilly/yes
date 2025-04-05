@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LYBU Messages 💌</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <header>
+    <h1>💬 Messages for LYBU 💬</h1>
+    <p>Leave something sweet for your pottu 🥺💗</p>
+  </header>
+
+  <main>
+    <form id="messageForm">
+      <input type="text" id="nameInput" placeholder="Your name (or Musu)" required />
+      <textarea id="messageInput" placeholder="Write your message..." rows="4" required></textarea>
+      <button type="submit">Send Message 💌</button>
+    </form>
+
+    <div id="messagesContainer"></div>
+  </main>
+
+  <nav>
+    <button onclick="location.href='index.html'">🏡 Back Home</button>
+    <button onclick="location.href='mood.html'">🎶 Mood</button>
+    <button onclick="location.href='letter.html'">💌 Letter</button>
+  </nav>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+
+  <!-- Firebase Config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUgpHfT0i2hTWjylH6Ow59Gv8e7IvSoTo",
+      authDomain: "lsml-8024f.firebaseapp.com",
+      databaseURL: "https://lsml-8024f-default-rtdb.firebaseio.com",
+      projectId: "lsml-8024f",
+      storageBucket: "lsml-8024f.appspot.com",
+      messagingSenderId: "365076649351",
+      appId: "1:365076649351:web:17f512923664ceced32f22"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+  <!-- Messages Logic -->
+  <script>
+    const form = document.getElementById("messageForm");
+    const nameInput = document.getElementById("nameInput");
+    const messageInput = document.getElementById("messageInput");
+    const messagesContainer = document.getElementById("messagesContainer");
+
+    // Submit new message
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      const message = messageInput.value.trim();
+
+      if (name && message) {
+        const newMessageRef = db.ref("messages").push();
+        newMessageRef.set({
+          name,
+          message,
+          timestamp: Date.now()
+        });
+
+        form.reset();
+      }
+    });
+
+    // Listen for new messages
+    db.ref("messages").on("value", (snapshot) => {
+      messagesContainer.innerHTML = ""; // Clear first
+      const data = snapshot.val();
+
+      if (data) {
+        // Sort messages by timestamp
+        const sortedMessages = Object.entries(data).sort(
+          (a, b) => b[1].timestamp - a[1].timestamp
+        );
+
+        sortedMessages.forEach(([key, msg]) => {
+          const messageDiv = document.createElement("div");
+          messageDiv.className = "message";
+
+          const time = new Date(msg.timestamp).toLocaleString();
+
+          messageDiv.innerHTML = `
+            <p><strong>${msg.name}</strong> <span style="font-size:0.8em; color:#888;">(${time})</span></p>
+            <p>${msg.message}</p>
+          `;
+          messagesContainer.appendChild(messageDiv);
+        });
+      } else {
+        messagesContainer.innerHTML = "<p>No messages yet 😭</p>";
+      }
+    });
+  </script>
+
+  <style>
+    form {
+      margin: 20px auto;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input, textarea {
+      padding: 12px;
+      font-size: 1em;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .message {
+      background: #fff0f4;
+      border: 1px solid #ffc2d1;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 10px auto;
+      max-width: 500px;
+      text-align: left;
+    }
+  </style>
+</body>
+</html>

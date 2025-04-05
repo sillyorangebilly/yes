@@ -1,12 +1,32 @@
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>POTTU</title>
-  <link rel="stylesheet" href="css/style.css">
+
+  <link rel="stylesheet" href="css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+
+  <!-- Firebase Config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdKvsfn_Y3RdW1YpwWjNXRJhSiPkB1GRY",
+      authDomain: "lmsl-5e0d3.firebaseapp.com",
+      databaseURL: "https://lmsl-5e0d3-default-rtdb.firebaseio.com",
+      projectId: "lmsl-5e0d3",
+      storageBucket: "lmsl-5e0d3.appspot.com",
+      messagingSenderId: "274869154457"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+  </script>
 </head>
+
 <body>
   <header>
     <h1>HAIIIIII Lybu 💕</h1>
@@ -14,27 +34,95 @@
   </header>
 
   <main>
-    <button onclick="showHug()">🤗 HUG BUTTON :333</button>
-    <div id="hug" class="hug-message">
+    <button onclick="sendHug()">🤗 HUG BUTTON :333</button>
+    <p>Hugs given: <span id="hugCount">0</span></p>
+
+    <button onclick="sendKiss()">😘 KISS BUTTON :333</button>
+    <p>Kisses given: <span id="kissCount">0</span></p>
+
+    <div id="hug" class="hug-message" style="display: none;">
       <p>💖 BIG AHH ARMS AROUND YOU NOW 💖</p>
     </div>
+
     <div class="hearts-container" id="heartsContainer"></div>
-    <div class="floating-quotes">
-        <span class="quote">“ABEY YAAL...”</span>
-        <span class="quote">“BADMAASH COMPANY”</span>
-        <span class="quote">“NUEHEHEHHEHEHEH”</span>
-        <span class="quote">“Yaha se bohot door sahi aur galta ke paar
-            ek maidaan hai mai waha milunga tujhe”</span>
-      </div>
-      
   </main>
 
   <nav>
     <button onclick="location.href='letter.html'">💌 From MUSU to LYBU</button>
     <button onclick="location.href='mood.html'">🎧 LYBU playlist :333</button>
+    <button onclick="location.href='messages.html'">💬 LYBU Messages</button>
+    <button onclick="location.href='constellation.html'">🌌 LYBU Constellation</button>
   </nav>
-  
 
-  <script src="js/script.js"></script>
+  <button id="darkModeToggle" class="dark-toggle">🌙</button>
+
+  <!-- Hug & Kiss Script -->
+  <script>
+    const hugCountEl = document.getElementById("hugCount");
+    const kissCountEl = document.getElementById("kissCount");
+
+    const hugRef = database.ref("counts/hugs");
+    const kissRef = database.ref("counts/kisses");
+
+    hugRef.on("value", snapshot => {
+      hugCountEl.textContent = snapshot.val() || 0;
+    });
+
+    kissRef.on("value", snapshot => {
+      kissCountEl.textContent = snapshot.val() || 0;
+    });
+
+    function sendHug() {
+      const hug = document.getElementById("hug");
+      const heartsContainer = document.getElementById("heartsContainer");
+
+      hug.style.display = "block";
+      hugRef.transaction(current => (current || 0) + 1);
+
+      const starRef = database.ref("stars");
+      starRef.push({
+        x: Math.random(),
+        y: Math.random(),
+        type: "hug",
+        timestamp: Date.now()
+      });
+
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.style.left = Math.random() * 90 + "%";
+        heart.style.animationDuration = (1.5 + Math.random()).toFixed(2) + "s";
+        heartsContainer.appendChild(heart);
+        setTimeout(() => heart.remove(), 2000);
+      }
+    }
+
+    function sendKiss() {
+      kissRef.transaction(current => (current || 0) + 1);
+
+      const starRef = database.ref("stars");
+      starRef.push({
+        x: Math.random(),
+        y: Math.random(),
+        type: "kiss",
+        timestamp: Date.now()
+      });
+
+      const kiss = document.createElement("div");
+      kiss.className = "heart";
+      kiss.innerHTML = "💋";
+      kiss.style.left = Math.random() * 90 + "%";
+      kiss.style.top = "50%";
+      kiss.style.position = "absolute";
+      kiss.style.fontSize = "24px";
+      kiss.style.animation = "floatUp 1.5s ease-out forwards";
+      document.body.appendChild(kiss);
+      setTimeout(() => kiss.remove(), 1500);
+    }
+
+    document.getElementById("darkModeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+  </script>
 </body>
 </html>

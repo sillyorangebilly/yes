@@ -1,37 +1,44 @@
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>For Lybu 💌</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
 </head>
 <body>
+
   <header>
     <h1>Dear Lybu 💗</h1>
   </header>
 
   <main>
-    <p>
-      I know it is hard meri jaan and i know it feels lonely sometimes
-      <p>but i will genuinely always love you and this is just a small </p>
-      <p>way to show you how much u mean to me i truly cherish everymoment i get with you,</p>
-      <p>you deserve to always be happy and im glad i get</p>
-      <p>to make a happy for a bit</p>
-      <p>also dont kys pottu</p>
-    </p>
-    <p>
-      I'm always here for you, no matter what 💖
-    </p>
-    <p>
-      Love, always,<br>
-      Musu ;3
-    </p>
+    <section class="letter">
+      <p>I know it is hard meri jaan and I know it feels lonely sometimes...</p>
+      <p>But I will genuinely always love you. This is just a small way to show how much you mean to me.</p>
+      <p>I truly cherish every moment I get with you.</p>
+      <p>You deserve to always be happy, and I’m so glad I get to make you smile — even just a little.</p>
+      <p>Also... don’t kys, pottu 😠💗</p>
+      <p>I’m always here for you, no matter what 💖</p>
+      <p>Love, always,<br />Musu ;3</p>
+    </section>
   </main>
 
+  <button id="darkModeToggle" class="dark-toggle">🌙</button>
+
   <nav>
-    <a href="letter.html"> From MUSU to LYBU </a>
-    <a href="mood.html">LYBU playlist :333</a>
+    <button onclick="location.href='letter.html'">💌 From MUSU to LYBU</button>
+    <button onclick="location.href='mood.html'">🎧 LYBU playlist :333</button>
   </nav>
+
+  <script>
+    const toggle = document.getElementById('darkModeToggle');
+    toggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      toggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    });
+  </script>
+
 </body>
 </html>
